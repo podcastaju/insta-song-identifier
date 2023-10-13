@@ -3,22 +3,35 @@ const { Builder, By, until } = require("selenium-webdriver");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs");
+const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path; // Add this line
 const ffmpeg = require("fluent-ffmpeg");
 const express = require("express");
 const TelegramBot = require("node-telegram-bot-api");
 const app = express();
+require("dotenv").config();
 
 const token = "6653608319:AAE0Ehdj_cDJVwLdaNds5dNxKAisrqrskFM"; // Replace with your bot's API token
 const bot = new TelegramBot(token, { polling: true });
 
 // Set the path to the ffmpeg executable
 ffmpeg.setFfmpegPath(ffmpegPath);
-
+// puppeteer start
 async function downloadInstagramReel(url, outputFilePath) {
   try {
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      args: [
+        "--disable-setuid-sandbox",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote",
+      ],
+      executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+    });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "networkidle0" });
 
@@ -210,6 +223,8 @@ async function openWebsite(mp3FilePath) {
 
 bot.on("polling_error", (error) => {
   console.error("Polling error:", error);
+  const chatId = msg.chat.id;
+  bot.sendMessage(chatId, "Hello");
 });
 
 bot.onText(/\/start/, (msg) => {

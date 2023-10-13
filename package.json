@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,12 +12,13 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "axios": "^1.5.1",
+    "env": "^0.0.2",
     "express": "^4.18.2",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
     "fs": "^0.0.1-security",
     "node-telegram-bot-api": "^0.63.0",
-    "puppeteer": "^21.3.8",
+    "puppeteer": "^19.8.0",
     "selenium-webdriver": "^4.13.0"
   }
 }
