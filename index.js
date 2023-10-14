@@ -32,10 +32,11 @@ async function downloadInstagramReel(url, outputFilePath) {
           : puppeteer.executablePath(),
     });
     const page = await browser.newPage();
+    await page.setDefaultNavigationTimeout(60000);
     await page.goto(url, { waitUntil: "networkidle0" });
 
     // Wait for the video to load
-    await page.waitForSelector("video", { timeout: 5000 });
+    await page.waitForSelector("video", { timeout: 60000 });
 
     const videoUrl = await page.evaluate(() => {
       const videoElement = document.querySelector("video");
