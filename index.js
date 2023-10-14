@@ -3,7 +3,6 @@ const { Builder, By, until } = require("selenium-webdriver");
 const path = require("path");
 const axios = require("axios");
 const fs = require("fs");
-const cheerio = require("cheerio");
 const puppeteer = require("puppeteer");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path; // Add this line
 const ffmpeg = require("fluent-ffmpeg");
