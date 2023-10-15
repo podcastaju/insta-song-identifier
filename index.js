@@ -95,126 +95,113 @@ function sleep(ms) {
 
 // Set up the WebDriver
 async function openWebsite(mp3FilePath) {
-  const driver = await new Builder().forBrowser("chrome").build();
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--start-maximized"],
+    executablePath:
+        process.env.NODE_ENV === "production"
+          ? process.env.PUPPETEER_EXECUTABLE_PATH
+          : puppeteer.executablePath(),
+  });
+  const page = await browser.newPage();
 
   try {
-    // Maximize the browser window
-    await driver.manage().window().maximize();
+    await page.setViewport({ width: 1920, height: 1080 });
+    await page.goto("https://www.proxysite.com/");
 
-    await driver.get(`https://www.proxysite.com/`);
-
-    // Locate the input field for entering the link
-    const linkInput = await driver.findElement(By.css("input[type='text']"));
-
-    // Enter the link into the input field
     const linkToEnter =
-      "https://www.aha-music.com/identify-songs-music-recognition-online"; // Replace with the link you want to enter
-    await linkInput.sendKeys(linkToEnter);
+      "https://www.aha-music.com/identify-songs-music-recognition-online";
+    await page.type("input[type='text']", linkToEnter);
 
-    // Define a variable to store the current URL
-    let currentURL = await driver.getCurrentUrl();
+    let currentURL = page.url();
 
-    // Loop until the URL changes
     while (true) {
       try {
-        // Locate and click the button to proceed
-        const submitButton = await driver.findElement(
-          By.css("button[type='submit']")
-        );
+        const submitButton = await page.$("button[type='submit']");
 
-        // Click the submit button to proceed
-        await submitButton.click();
+        if (submitButton) {
+          await submitButton.click();
+        }
 
-        // Wait for a short period to allow the page to load
         await sleep(3000); // Adjust the delay as needed
 
-        // Get the updated URL
-        const updatedURL = await driver.getCurrentUrl();
+        const updatedURL = page.url();
 
-        // Check if the URL has changed
         if (currentURL !== updatedURL) {
-          break; // Exit the loop if the URL changes
+          break;
         }
       } catch (error) {
-        // Handle any exceptions that occur during interactions
         console.error("An error occurred:", error);
-        // Wait for a short period before retrying
         await sleep(2000); // Adjust the delay as needed
       }
     }
-
-    // Locate the file input element
-    const fileInput = await driver.findElement(By.css("input[type='file']"));
-
-    // Set the file path to the input element
+    await sleep(5000);
+    // Wait for the file input element and set the file path
+    await page.waitForSelector("input[type='file']");
     const filePath = path.resolve(__dirname, "reelAudios.mp3"); // Replace with your file path
-    await fileInput.sendKeys(filePath);
+    const fileInput = await page.$("input[type='file']");
+    await fileInput.uploadFile(filePath);
 
-    // Wait for the "Accept" button to become clickable
-    const acceptButton = await driver.findElement(By.className("iAccept"));
-    await driver.wait(until.elementIsVisible(acceptButton));
+    // Wait for the "Accept" button and click it
+    await page.waitForSelector(".iAccept");
+    await page.click(".iAccept");
 
-    // Click the "Accept" button
-    await acceptButton.click();
+    // Wait for the start button and click it
+    await page.waitForSelector(".btn.btn-primary.start");
+    await page.click(".btn.btn-primary.start");
 
-    // Wait for the button with class name "btn btn-primary start" to become clickable
-    const startButton = await driver.findElement(
-      By.className("btn btn-primary start")
-    );
-    await driver.wait(until.elementIsVisible(startButton));
-
-    // Click the start button
-    await startButton.click();
-
-    // Wait for the <pre> element with class name "panel panel-default" to appear
-    const preElement = await driver.findElement(
-      By.className("panel panel-default")
-    );
-
-    // Wait for the <p> element to become present inside the <pre> element
-    const pElement = await driver.wait(
-      until.elementLocated(By.css("pre.panel.panel-default p")),
-      10000
-    ); // Adjust the timeout as needed
+    // Wait for the <pre> element and the <p> element inside it
+    await page.waitForSelector("pre.panel.panel-default p", {
+      timeout: 20000,
+    });
 
     // Get the text content of the <p> element
-    const paragraphText = await pElement.getText();
+    const paragraphText = await page.$eval(
+      "pre.panel.panel-default p",
+      (element) => element.textContent
+    );
 
-    // Log the text content to the console
     console.log(paragraphText);
-    // Check if there are at least 3 lines (2nd and 3rd lines)
-    // Split the text into lines
-    const lines = paragraphText.split("\n");
-    if (lines.length >= 3) {
-      // Extract the 2nd and 3rd lines (index 1 and 2)
-      const line2 = lines[1];
-      const line3 = lines[2];
 
-      // Remove "Title:" from line2 and "Artist:" from line3
-      const songTitle = line2.replace("Title: ", "");
-      const artistName = line3.replace("Artist: ", "");
+    let titleText;
+    let artistText;
+    const titleIndex = paragraphText.indexOf("Title:");
+    const artistIndex = paragraphText.indexOf("Artist:");
+    const externalIdsIndex = paragraphText.indexOf("External IDs:");
 
-      // Merge the remaining text into songname
-      const songname = `${songTitle} - ${artistName}`;
+    // Check if "Title:" and "Artist:" are found
+    if (titleIndex !== -1 && artistIndex !== -1) {
+      // Extract the text between "Title:" and "Artist:"
+      titleText = paragraphText
+        .substring(titleIndex + "Title:".length, artistIndex)
+        .trim();
 
-      // Log the merged songname to the console
-      console.log("Song Name:", songname);
-
-      // Perform a YouTube search using the songname
-      const youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodeURIComponent(
-        songname
-      )}`;
-
-      // Log the YouTube search URL to the console
-      console.log("YouTube Search URL:", youtubeSearchURL);
-
-      // Log the 2nd and 3rd lines to the console
-      console.log("2nd Line:", line2);
-      console.log("3rd Line:", line3);
-      fs.unlinkSync(mp3FilePath);
+      // Log the extracted title
+      console.log("Title:", titleText);
     } else {
-      console.error("Not enough lines in the paragraphText.");
+      console.error("Title and/or Artist not found in the paragraph.");
     }
+    if (artistIndex !== -1 && externalIdsIndex !== -1) {
+      // Extract the text between "Artist" and "External IDs"
+      artistText = paragraphText
+        .substring(artistIndex + "Artist:".length, externalIdsIndex)
+        .trim();
+
+      // Log the extracted artist text
+      console.log("Artist:", artistText);
+    } else {
+      console.error("Artist and/or External IDs not found in the paragraph.");
+    }
+    const songname = `${titleText} - ${artistText}`;
+    console.log("Song Name:", songname);
+
+    // Perform a YouTube search using the songname
+    const youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+      songname
+    )}`;
+
+    // Log the YouTube search URL to the console
+    console.log("YouTube Search URL:", youtubeSearchURL);
   } finally {
     // Close the WebDriver
     // await driver.quit();
