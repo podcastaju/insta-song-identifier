@@ -119,6 +119,7 @@ async function openWebsite(mp3FilePath) {
           ? process.env.PUPPETEER_EXECUTABLE_PATH
           : puppeteer.executablePath(),
     });
+    const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto("https://www.proxysite.com/");
 
