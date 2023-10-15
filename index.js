@@ -209,6 +209,7 @@ async function openWebsite(mp3FilePath) {
     // Log the YouTube search URL to the console
     console.log("YouTube Search URL:", youtubeSearchURL);
     fs.unlinkSync(mp3FilePath);
+    console.log("finished");
   } finally {
     // Close the WebDriver
     // await driver.quit();
