@@ -96,7 +96,8 @@ function sleep(ms) {
 // Set up the WebDriver
 async function openWebsite(mp3FilePath) {
   const browser = await puppeteer.launch({
-    args: ["--disable-setuid-sandbox",
+    args: [
+        "--disable-setuid-sandbox",
         "--no-sandbox",
         "--single-process",
         "--no-zygote",
@@ -112,7 +113,7 @@ async function openWebsite(mp3FilePath) {
   try {
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto("https://www.proxysite.com/");
-
+    console.log("enter 1st website");
     const linkToEnter =
       "https://www.aha-music.com/identify-songs-music-recognition-online";
     await page.type("input[type='text']", linkToEnter);
@@ -139,13 +140,14 @@ async function openWebsite(mp3FilePath) {
         await sleep(2000); // Adjust the delay as needed
       }
     }
+    console.log("enter 2nd website");
     await sleep(5000);
     // Wait for the file input element and set the file path
     await page.waitForSelector("input[type='file']");
     const filePath = path.resolve(__dirname, "reelAudios.mp3"); // Replace with your file path
     const fileInput = await page.$("input[type='file']");
     await fileInput.uploadFile(filePath);
-
+    console.log("uploaded file");
     // Wait for the "Accept" button and click it
     await page.waitForSelector(".iAccept");
     await page.click(".iAccept");
@@ -153,7 +155,7 @@ async function openWebsite(mp3FilePath) {
     // Wait for the start button and click it
     await page.waitForSelector(".btn.btn-primary.start");
     await page.click(".btn.btn-primary.start");
-
+    console.log("recogn started");
     // Wait for the <pre> element and the <p> element inside it
     await page.waitForSelector("pre.panel.panel-default p", {
       timeout: 20000,
