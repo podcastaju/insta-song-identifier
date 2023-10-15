@@ -208,11 +208,11 @@ async function openWebsite(mp3FilePath) {
   }
 }
 
-bot.on("polling_error", (error) => {
-  console.error("Polling error:", error);
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, "Hello");
-});
+// bot.on("polling_error", (error) => {
+//   console.error("Polling error:", error);
+//   const chatId = msg.chat.id;
+//   bot.sendMessage(chatId, "Hello");
+// });
 
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
