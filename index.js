@@ -96,7 +96,6 @@ function sleep(ms) {
 // Set up the WebDriver
 async function openWebsite(mp3FilePath) {
   const browser = await puppeteer.launch({
-    headless: false,
     args: ["--disable-setuid-sandbox",
         "--no-sandbox",
         "--single-process",
