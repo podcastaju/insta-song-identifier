@@ -93,6 +93,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+let songname;
+let youtubesearchURL;
 // Set up the WebDriver
 async function openWebsite(mp3FilePath) {
   const browser = await puppeteer.launch({
@@ -198,11 +200,11 @@ async function openWebsite(mp3FilePath) {
     } else {
       console.error("Artist and/or External IDs not found in the paragraph.");
     }
-    const songname = `${titleText} - ${artistText}`;
+    songname = `${titleText} - ${artistText}`;
     console.log("Song Name:", songname);
 
     // Perform a YouTube search using the songname
-    const youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+    youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodeURIComponent(
       songname
     )}`;
 
@@ -224,6 +226,14 @@ bot.onText(/\/start/, (msg) => {
   downloadInstagramReel(instagramUrl, outputFilePath);
   // Respond to the Telegram bot with a message
   bot.sendMessage(chatId, "Your script has been executed.");
+  // Check if songname and youtubeSearchURL are set
+  if (songname && youtubeSearchURL) {
+    // Respond to the Telegram bot with songname and youtubeSearchURL
+    bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
+  } else {
+    // If the values are not set, respond with a message indicating that the script hasn't been run yet
+    bot.sendMessage(chatId, "The script hasn't been run yet or song information is not available.");
+  }
 });
 
 // Start the Express app on a specific port
