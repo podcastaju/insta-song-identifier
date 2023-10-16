@@ -32,11 +32,11 @@ async function downloadInstagramReel(url, outputFilePath) {
           : puppeteer.executablePath(),
     });
     const page = await browser.newPage();
-    await page.setDefaultNavigationTimeout(60000);
+    await page.setDefaultNavigationTimeout(120000);
     await page.goto(url, { waitUntil: "networkidle0" });
 
     // Wait for the video to load
-    await page.waitForSelector("video", { timeout: 60000 });
+    await page.waitForSelector("video", { timeout: 120000 });
 
     const videoUrl = await page.evaluate(() => {
       const videoElement = document.querySelector("video");
@@ -209,7 +209,7 @@ async function openWebsite(mp3FilePath) {
     // Log the YouTube search URL to the console
     console.log("YouTube Search URL:", youtubeSearchURL);
     fs.unlinkSync(mp3FilePath);
-    console.log("finished");
+    console.log("finished file deleted");
   } finally {
     // Close the WebDriver
     // await driver.quit();
