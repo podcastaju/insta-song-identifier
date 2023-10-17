@@ -85,7 +85,7 @@ async function downloadInstagramReel(url, outputFilePath) {
 
 // Usage
 const instagramUrl =
-  "https://www.instagram.com/reel/CxpFFBqyOyo/?utm_source=ig_web_copy_link";
+  "https://www.instagram.com/reel/CyLZlAKvIRW/?igshid=MzRlODBiNWFlZA==";
 const outputFilePath = "reelAudios.mp3"; // Specify the output audio file path
 // downloadInstagramReel(instagramUrl, outputFilePath);
 
