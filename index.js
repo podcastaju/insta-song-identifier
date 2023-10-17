@@ -95,6 +95,7 @@ function sleep(ms) {
 
 let songname;
 let youtubesearchURL;
+let scriptExecuted = false;
 // Set up the WebDriver
 async function openWebsite(mp3FilePath) {
   const browser = await puppeteer.launch({
@@ -212,6 +213,9 @@ async function openWebsite(mp3FilePath) {
     console.log("YouTube Search URL:", youtubeSearchURL);
     fs.unlinkSync(mp3FilePath);
     console.log("finished file deleted");
+    // Set scriptExecuted to true when the script has successfully completed
+    scriptExecuted = true;
+    console.log("script executed");
   } finally {
     // Close the WebDriver
     // await driver.quit();
@@ -223,16 +227,20 @@ bot.onText(/\/start/, (msg) => {
   console.log("Received a request with chat_id: " + chatId);
   // Run your script here (the code you provided earlier)
 
-  downloadInstagramReel(instagramUrl, outputFilePath);
-  // Respond to the Telegram bot with a message
-  bot.sendMessage(chatId, "Your script has been executed.");
-  // Check if songname and youtubeSearchURL are set
-  if (songname && youtubeSearchURL) {
-    // Respond to the Telegram bot with songname and youtubeSearchURL
-    bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
+  // Check if the script has been executed
+  if (scriptExecuted) {
+    // If the script has been executed, send songname and youtubeSearchURL
+    if (songname && youtubeSearchURL) {
+      bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
+    } else {
+      bot.sendMessage(chatId, "Song information is not available.");
+    }
   } else {
-    // If the values are not set, respond with a message indicating that the script hasn't been run yet
-    bot.sendMessage(chatId, "The script hasn't been run yet or song information is not available.");
+    // If the script hasn't been executed, run it now
+    downloadInstagramReel(instagramUrl, outputFilePath);
+
+    // Respond to the Telegram bot with a message
+    bot.sendMessage(chatId, "Running the script to fetch song information...");
   }
 });
 
