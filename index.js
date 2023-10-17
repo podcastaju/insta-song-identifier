@@ -222,14 +222,21 @@ async function openWebsite(mp3FilePath) {
   }
 }
 
-bot.onText(/\/start/, (msg) => {
+bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
   console.log("Received a request with chat_id: " + chatId);
   // Run your script here (the code you provided earlier)
-
-  downloadInstagramReel(instagramUrl, outputFilePath);
+  bot.sendMessage(chatId, "Running the script to fetch song information...");
+  await downloadInstagramReel(instagramUrl, outputFilePath);
   // Respond to the Telegram bot with a message
-  bot.sendMessage(chatId, "Your script has been executed.");
+
+
+  // Now that the script has executed, send songname and youtubeSearchURL
+  if (songname && youtubeSearchURL) {
+    bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
+  } else {
+    bot.sendMessage(chatId, "Song information is not available.");
+  }
 });
 
 // Start the Express app on a specific port
