@@ -227,21 +227,9 @@ bot.onText(/\/start/, (msg) => {
   console.log("Received a request with chat_id: " + chatId);
   // Run your script here (the code you provided earlier)
 
-  // Check if the script has been executed
-  if (scriptExecuted) {
-    // If the script has been executed, send songname and youtubeSearchURL
-    if (songname && youtubeSearchURL) {
-      bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
-    } else {
-      bot.sendMessage(chatId, "Song information is not available.");
-    }
-  } else {
-    // If the script hasn't been executed, run it now
-    downloadInstagramReel(instagramUrl, outputFilePath);
-
-    // Respond to the Telegram bot with a message
-    bot.sendMessage(chatId, "Running the script to fetch song information...");
-  }
+  downloadInstagramReel(instagramUrl, outputFilePath);
+  // Respond to the Telegram bot with a message
+  bot.sendMessage(chatId, "Your script has been executed.");
 });
 
 // Start the Express app on a specific port
