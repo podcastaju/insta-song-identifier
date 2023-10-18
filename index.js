@@ -84,8 +84,8 @@ async function downloadInstagramReel(url, outputFilePath, chatId) {
 }
 
 // Usage
-const instagramUrl =
-  "https://www.instagram.com/reel/CyLZlAKvIRW/?igshid=MzRlODBiNWFlZA==";
+let instagramUrl =
+  "";
 const outputFilePath = "reelAudios.mp3"; // Specify the output audio file path
 // downloadInstagramReel(instagramUrl, outputFilePath);
 
@@ -228,22 +228,20 @@ async function openWebsite(mp3FilePath, chatId) {
   }
 }
 
-bot.onText(/\/start/, async (msg) => {
+bot.onText(/\/start (.+)/, async (msg, match) => {
   const chatId = msg.chat.id;
-  console.log("Received a request with chat_id: " + chatId);
-  // Run your script here (the code you provided earlier)
+  instagramUrl = match[1]; // Store the Instagram URL provided by the user
+
+  // You can perform further validation on the provided URL if needed
+
+  console.log("Received Instagram URL:", dynamicInstagramUrl);
+
+  // Now, call the function to download the Instagram reel with the provided URL
   bot.sendMessage(chatId, "Running the script to fetch song information...");
+
   await downloadInstagramReel(instagramUrl, outputFilePath, chatId);
-  // Respond to the Telegram bot with a message
-
-
-  // Now that the script has executed, send songname and youtubeSearchURL
-  //if (songname && youtubeSearchURL) {
-    //bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
-  //} else {
-   // bot.sendMessage(chatId, "Song information is not available.");
-  //}
 });
+
 
 // Start the Express app on a specific port
 const port = 3000 || process.env.PORT; // You can choose any port
