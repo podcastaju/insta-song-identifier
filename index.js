@@ -17,7 +17,7 @@ const bot = new TelegramBot(token, { polling: true });
 // Set the path to the ffmpeg executable
 ffmpeg.setFfmpegPath(ffmpegPath);
 // puppeteer start
-async function downloadInstagramReel(url, outputFilePath) {
+async function downloadInstagramReel(url, outputFilePath, chatId) {
   try {
     const browser = await puppeteer.launch({
       args: [
@@ -67,7 +67,7 @@ async function downloadInstagramReel(url, outputFilePath) {
           console.log("Reel converted to MP3 successfully.");
           fs.unlinkSync(videoFilePath); // Remove the temporary video file
           // Now that the MP3 file is ready, call the openWebsite function
-          openWebsite(mp3FilePath);
+          openWebsite(mp3FilePath, chatId);
         })
         .on("error", (err) => {
           console.error("Error converting to MP3:", err);
@@ -97,7 +97,7 @@ let songname;
 let youtubesearchURL;
 let scriptExecuted = false;
 // Set up the WebDriver
-async function openWebsite(mp3FilePath) {
+async function openWebsite(mp3FilePath, chatId) {
   const browser = await puppeteer.launch({
     args: [
         "--disable-setuid-sandbox",
@@ -211,6 +211,12 @@ async function openWebsite(mp3FilePath) {
 
     // Log the YouTube search URL to the console
     console.log("YouTube Search URL:", youtubeSearchURL);
+    // Send song information
+    if (songname && youtubeSearchURL) {
+      bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
+    } else {
+      bot.sendMessage(chatId, "Song information is not available.");
+    }
     fs.unlinkSync(mp3FilePath);
     console.log("finished file deleted");
     // Set scriptExecuted to true when the script has successfully completed
@@ -227,16 +233,16 @@ bot.onText(/\/start/, async (msg) => {
   console.log("Received a request with chat_id: " + chatId);
   // Run your script here (the code you provided earlier)
   bot.sendMessage(chatId, "Running the script to fetch song information...");
-  await downloadInstagramReel(instagramUrl, outputFilePath);
+  await downloadInstagramReel(instagramUrl, outputFilePath, chatId);
   // Respond to the Telegram bot with a message
 
 
   // Now that the script has executed, send songname and youtubeSearchURL
-  if (songname && youtubeSearchURL) {
-    bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
-  } else {
-    bot.sendMessage(chatId, "Song information is not available.");
-  }
+  //if (songname && youtubeSearchURL) {
+    //bot.sendMessage(chatId, `Song Name: ${songname}\nYouTube Search URL: ${youtubeSearchURL}`);
+  //} else {
+   // bot.sendMessage(chatId, "Song information is not available.");
+  //}
 });
 
 // Start the Express app on a specific port
