@@ -234,7 +234,7 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
 
   // You can perform further validation on the provided URL if needed
 
-  console.log("Received Instagram URL:", dynamicInstagramUrl);
+  console.log("Received Instagram URL:", instagramUrl);
 
   // Now, call the function to download the Instagram reel with the provided URL
   bot.sendMessage(chatId, "Running the script to fetch song information...");
