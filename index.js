@@ -99,6 +99,7 @@ async function downloadInstagramReel(url, chatId) {
     });
     const page = await browser.newPage();
     await page.setDefaultNavigationTimeout(120000);
+    await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36");
     const mp3FilePath = path.join(__dirname);
     // Navigate to the website
     const websiteUrl = "https://instavideosave.net/audio";
@@ -179,7 +180,6 @@ let scriptExecuted = false;
 // Set up the WebDriver
 async function openWebsite(mp3FilePath, chatId) {
   const browser = await puppeteer.launch({
-    headless: false,
     args: [
         "--disable-setuid-sandbox",
         "--no-sandbox",
@@ -193,6 +193,7 @@ async function openWebsite(mp3FilePath, chatId) {
           : puppeteer.executablePath(),
   });
   const page = await browser.newPage();
+  await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36");
   // Specify the download directory
   const downloadDirectory = path.join(__dirname);
 
