@@ -312,7 +312,7 @@ async function openWebsite(mp3FilePath, chatId) {
     // Set scriptExecuted to true when the script has successfully completed
     scriptExecuted = true;
     await console.log("script executed");
-    driver.quit();
+    browser.close();
     console.log("browser closed");
   } finally {
     // Close the WebDriver
