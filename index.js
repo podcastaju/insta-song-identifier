@@ -86,7 +86,6 @@ const bot = new TelegramBot(token, { polling: true });
 async function downloadInstagramReel(url, chatId) {
   try {
     const browser = await puppeteer.launch({
-      headless: false,
       args: [
         "--disable-setuid-sandbox",
         "--no-sandbox",
@@ -143,7 +142,7 @@ async function downloadInstagramReel(url, chatId) {
 
     // Click the second "Download Audio" button
     await page.click("button.bg-blue-600.mt-2");
-
+    console.log("file has been downloaded");
     // Wait for any download to complete
     // Continuously check for a file with ".mp3" extension
     let interval = setInterval(() => {
