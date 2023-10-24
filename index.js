@@ -331,7 +331,7 @@ bot.onText(/\/start (.+)/, async (msg, match) => {
   // Now, call the function to download the Instagram reel with the provided URL
   bot.sendMessage(chatId, "Running the script to fetch song information...");
 
-  await downloadInstagramReel(instagramUrl, outputFilePath, chatId);
+  await downloadInstagramReel(instagramUrl, chatId);
 });
 
 
