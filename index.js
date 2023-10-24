@@ -156,7 +156,7 @@ async function downloadInstagramReel(url, chatId) {
       if (mp3File) {
         clearInterval(interval);
         browser.close();
-        openWebsite(mp3FilePath);
+        openWebsite(mp3FilePath, chatId);
       }
     }, 1000);
   } catch (error) {
